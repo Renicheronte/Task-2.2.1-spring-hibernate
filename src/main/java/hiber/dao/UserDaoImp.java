@@ -11,9 +11,12 @@ import java.util.List;
 
 @Repository
 public class UserDaoImp implements UserDao {
+   private SessionFactory sessionFactory;
 
    @Autowired
-   private SessionFactory sessionFactory;
+   public void setSessionFactory(SessionFactory sessionFactory) {
+      this.sessionFactory = sessionFactory;
+   }
 
    @Override
    public void add(User user) {
@@ -22,7 +25,7 @@ public class UserDaoImp implements UserDao {
 
    @Override
    @SuppressWarnings("unchecked")
-   public List<User> listUsers() {
+   public List<User> getUsersList() {
       TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("from User");
       return query.getResultList();
    }

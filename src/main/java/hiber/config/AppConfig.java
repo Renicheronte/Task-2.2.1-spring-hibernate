@@ -14,6 +14,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.util.Objects;
 import java.util.Properties;
 
 
@@ -22,17 +23,20 @@ import java.util.Properties;
 @EnableTransactionManagement
 @ComponentScan(value = "hiber")
 public class AppConfig {
+   private Environment environment;
 
    @Autowired
-   private Environment env;
+   public void setEnvironment(Environment environment) {
+      this.environment = environment;
+   }
 
    @Bean
    public DataSource getDataSource() {
       DriverManagerDataSource dataSource = new DriverManagerDataSource();
-      dataSource.setDriverClassName(env.getProperty("db.driver"));
-      dataSource.setUrl(env.getProperty("db.url"));
-      dataSource.setUsername(env.getProperty("db.username"));
-      dataSource.setPassword(env.getProperty("db.password"));
+      dataSource.setDriverClassName(Objects.requireNonNull(environment.getProperty("db.driver")));
+      dataSource.setUrl(environment.getProperty("db.url"));
+      dataSource.setUsername(environment.getProperty("db.username"));
+      dataSource.setPassword(environment.getProperty("db.password"));
       return dataSource;
    }
 
@@ -42,8 +46,8 @@ public class AppConfig {
       factoryBean.setDataSource(getDataSource());
       
       Properties props=new Properties();
-      props.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
-      props.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
+      props.put("hibernate.show_sql", environment.getProperty("hibernate.show_sql"));
+      props.put("hibernate.hbm2ddl.auto", environment.getProperty("hibernate.hbm2ddl.auto"));
 
       factoryBean.setHibernateProperties(props);
       factoryBean.setAnnotatedClasses(User.class, Car.class);
